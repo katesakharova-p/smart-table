@@ -33,7 +33,7 @@ async function render(action) {
   const state = collectState(sampleTable.container);
   let query = {};
 
-  // query = applySearching(query, state, action);
+  query = applySearching(query, state, action);
 
   query = applyFiltering(query, state, action);
 

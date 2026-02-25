@@ -16,19 +16,26 @@ export function initFiltering(elements) {
     });
   };
 
+  // Функция для очистки конкретного поля
+  const clearField = (field) => {
+    if (field === "date" && elements.searchByDate) {
+      elements.searchByDate.value = "";
+    } else if (field === "customer" && elements.searchByCustomer) {
+      elements.searchByCustomer.value = "";
+    } else if (field === "seller" && elements.searchBySeller) {
+      elements.searchBySeller.value = "";
+    }
+  };
+
   // Функция для формирования параметров фильтрации в query
   const applyFiltering = (query, state, action) => {
-    if (action && typeof action === "object" && action.type === "clear") {
-      const field = action.field;
-      if (field === "date") {
-        if (elements.searchByDate) elements.searchByDate.value = "";
-      } else if (field === "customer") {
-        if (elements.searchByCustomer) elements.searchByCustomer.value = "";
-      } else if (field === "seller") {
-        if (elements.searchBySeller) elements.searchBySeller.value = "";
+    // Обработка очистки поля (приходит из table.js как DOM-элемент)
+    if (action && action.name === "clear") {
+      const field = action.dataset?.field;
+      if (field) {
+        clearField(field);
       }
-
-      return query;
+      return query; // не добавляем фильтры при очистке
     }
 
     const filterParams = {};
