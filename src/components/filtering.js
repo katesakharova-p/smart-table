@@ -1,29 +1,73 @@
-import { createComparison, defaultRules } from "../lib/compare.js";
+export function initFiltering(elements) {
+  // Функция для обновления селекта продавцов
+  const updateIndexes = (elements, indexes) => {
+    Object.keys(indexes).forEach((elementName) => {
+      if (elements[elementName]) {
+        const select = elements[elementName];
+        select.innerHTML = '<option value="" selected>—</option>';
 
-const compare = createComparison(defaultRules);
+        Object.values(indexes[elementName]).forEach((name) => {
+          const el = document.createElement("option");
+          el.textContent = name;
+          el.value = name;
+          select.appendChild(el);
+        });
+      }
+    });
+  };
 
-export function initFiltering(elements, indexes) {
-  Object.keys(indexes).forEach(elementName => {
-    elements[elementName].append(
-      ...Object.values(indexes[elementName]).map(name => {
-        const option = document.createElement("option");
-        option.value = name;
-        option.textContent = name;
-        return option;
-      })
-    );
-  });
+  // Функция для формирования параметров фильтрации в query
+  const applyFiltering = (query, state, action) => {
+    if (action && typeof action === "object" && action.type === "clear") {
+      const field = action.field;
+      if (field === "date") {
+        if (elements.searchByDate) elements.searchByDate.value = "";
+      } else if (field === "customer") {
+        if (elements.searchByCustomer) elements.searchByCustomer.value = "";
+      } else if (field === "seller") {
+        if (elements.searchBySeller) elements.searchBySeller.value = "";
+      }
 
-  return (data, state, action) => {
-    if (action && action.name === "clear") {
-      const field = action.dataset.field;
-      const parent = action.parentElement;
-      const input = parent.querySelector("input, select");
-
-      if (input) input.value = "";
-      if (field in state) state[field] = "";
+      return query;
     }
 
-    return data.filter(row => compare(row, state));
+    const filterParams = {};
+
+    if (elements.searchByDate && elements.searchByDate.value) {
+      const dateValue = elements.searchByDate.value;
+      // API принимает только полную дату в формате YYYY-MM-DD
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+        filterParams["filter[date]"] = dateValue;
+      } else {
+        console.log("Date filter ignored: not a full date", dateValue);
+      }
+    }
+
+    if (elements.searchByCustomer && elements.searchByCustomer.value) {
+      filterParams["filter[customer]"] = elements.searchByCustomer.value;
+    }
+
+    if (elements.searchBySeller && elements.searchBySeller.value) {
+      filterParams["filter[seller]"] = elements.searchBySeller.value;
+    }
+
+    if (elements.totalFrom && elements.totalFrom.value) {
+      filterParams["filter[totalFrom]"] = elements.totalFrom.value;
+    }
+
+    if (elements.totalTo && elements.totalTo.value) {
+      filterParams["filter[totalTo]"] = elements.totalTo.value;
+    }
+
+    if (Object.keys(filterParams).length > 0) {
+      return Object.assign({}, query, filterParams);
+    }
+
+    return query;
+  };
+
+  return {
+    updateIndexes,
+    applyFiltering,
   };
 }
