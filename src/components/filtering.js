@@ -29,13 +29,12 @@ export function initFiltering(elements) {
 
   // Функция для формирования параметров фильтрации в query
   const applyFiltering = (query, state, action) => {
-    // Обработка очистки поля (приходит из table.js как DOM-элемент)
     if (action && action.name === "clear") {
       const field = action.dataset?.field;
       if (field) {
         clearField(field);
       }
-      return query; // не добавляем фильтры при очистке
+      return query;
     }
 
     const filterParams = {};
