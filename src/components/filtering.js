@@ -44,8 +44,6 @@ export function initFiltering(elements) {
       // API принимает только полную дату в формате YYYY-MM-DD
       if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
         filterParams["filter[date]"] = dateValue;
-      } else {
-        console.log("Date filter ignored: not a full date", dateValue);
       }
     }
 
