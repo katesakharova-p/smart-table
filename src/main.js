@@ -71,7 +71,6 @@ const { applyPagination, updatePagination } = initPagination(
     label.textContent = page;
     return el;
   },
-  render,
 );
 
 async function init() {

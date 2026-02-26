@@ -16,25 +16,13 @@ export function initFiltering(elements) {
     });
   };
 
-  // Функция для очистки конкретного поля
-  const clearField = (field) => {
-    if (field === "date" && elements.searchByDate) {
-      elements.searchByDate.value = "";
-    } else if (field === "customer" && elements.searchByCustomer) {
-      elements.searchByCustomer.value = "";
-    } else if (field === "seller" && elements.searchBySeller) {
-      elements.searchBySeller.value = "";
-    }
-  };
-
   // Функция для формирования параметров фильтрации в query
   const applyFiltering = (query, state, action) => {
     if (action && action.name === "clear") {
-      const field = action.dataset?.field;
-      if (field) {
-        clearField(field);
+      const input = action.parentElement.querySelector("input, select");
+      if (input) {
+        input.value = "";
       }
-      return query;
     }
 
     const filterParams = {};
