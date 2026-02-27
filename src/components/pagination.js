@@ -12,8 +12,8 @@ export function initPagination(paginationElements, renderPageButton) {
     const limit = state.rowsPerPage;
     let page = state.page;
 
-    if (typeof action === "string") {
-      switch (action) {
+    if (action && action.name) {
+      switch (action.name) {
         case "prev":
           page = Math.max(1, page - 1);
           break;
